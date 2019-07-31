@@ -1,0 +1,139 @@
+<html>
+
+<head>
+	<title>Content Generator</title>
+	<link rel="stylesheet" href="../style.css" />
+	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js"></script>
+    <script type ="text/javascript">
+        // test the model here
+
+        let age,sex,mood,number;
+        window.onload = function() {
+
+            age    = document.querySelector("#age");
+            sex    = document.querySelector("#sex");
+            mood   = document.querySelector("#mood");
+            number = document.querySelector("#number");
+
+            const btn = document.querySelector("input[type='button']");
+            btn.addEventListener("click", getResult);
+        }
+
+        async function getResult() {
+            //console.log(ml5.tf)
+            const model = await tf.loadLayersModel('https://127.0.0.1:8080/IdealUserModel/my-model.json');
+
+            // // get data
+            const inputData = tf.tensor([[parseInt(age.value),parseInt(sex.options[sex.selectedIndex].value),parseInt(mood.options[mood.selectedIndex].value),parseInt(number.value)]]);
+            //const inputData = tf.tensor([[18	,1,	1,	9]]);
+            //inputData.reshape(inputData, [4])
+
+            const prediction = model.predict(inputData);
+            const worthy = (prediction.dataSync()[0] < .5) ? false:true;
+
+            console.log(prediction.dataSync()[0]);
+            
+            showMessage(prediction.dataSync()[0]);
+            showMessage((prediction.dataSync()[0] < .5) ? "Not Worthy":"Worthy");
+            addMessageDivider();
+            
+        }
+
+        function addMessageDivider() {
+            let elm = document.createElement("div");
+            elm.style.height = ".5em";
+
+            let msgs = document.getElementById("message");
+            if(msgs.firstChild)
+                msgs.insertBefore(elm, msgs.firstChild);
+            else
+                msgs.appendChild(elm);
+        }
+        function showMessage(str) {
+            let elm = document.createElement("div");
+            elm.innerHTML = str;
+
+            let msgs = document.getElementById("message");
+            if(msgs.firstChild)
+                msgs.insertBefore(elm, msgs.firstChild);
+            else
+                msgs.appendChild(elm);
+            
+        }
+    </script>
+
+    <style>
+        input {
+            font-size: 2rem
+        }
+        select {
+            font-size:2rem;
+            background-color: #FFF 
+        }
+
+        input {
+            font-size: 2rem
+        }
+        input[type="button"] {
+            cursor: pointer;
+        }
+        body {
+            padding: 2em
+        }
+    </style>
+
+</head>
+
+<body>
+
+<section style="float:left">
+    <div class="form-item">
+        Age <br/>
+        <input type="text" id="age" value="0" />
+    </div>
+
+    <div class="form-item">
+        Sex <br/>
+        <select name="" id="sex">
+            <option value="0">Male</option>
+            <option value="1">Female</option>
+        </select>
+        <!-- <input type="text" id="sex" value="0" /> -->
+    </div>
+
+    <div class="form-item">
+        Mood <br/>
+        <select name="" id="mood">
+            <option value="0">angry</option>
+            <option value="1">disgusted</option>
+            <option value="2">fearful</option>
+            <option value="3">happy</option>
+            <option value="4">neutral</option>
+            <option value="5">sad</option>
+            <option value="6">surprised</option>
+        </select>
+        <!-- <input type="text" id="mood" value="0" /> -->
+    </div>
+
+    <div class="form-item">
+        Number <br/>
+        <input type="text" id="number" value="0" />
+    </div>
+
+    <div class="form-item">
+        <input type="button" value="Get Result">
+    </div>
+    
+
+    
+    
+    
+</section>
+
+<section style="float:right">
+
+     <div id="message"></div>
+</section>
+
+</body>
+</html>

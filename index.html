@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+
+	<title>Testing Machine</title>
+
+	<meta name="viewport" content="width = device-width, initial-scale = 1.0, minimum-scale = 1, maximum-scale = 1, user-scalable = no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"></link>
+	<link rel="stylesheet" href="style.css"></link>
+
+	<script src="https://unpkg.com/ml5@0.3.1/dist/ml5.min.js"></script>
+	<!-- <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js"></script> -->
+	<script src="face-api.min.js"></script>
+	<script type="text/javascript" src="script.js"></script>
+
+</head>
+
+<body ontouchstart="">
+
+<div class="app-container">
+	<section class="main-form">
+
+		<div class="video-analyzer">
+			<video onplay="onPlay(this)" id="inputVideo" autoplay muted></video>
+			<canvas id="overlay" style="position:absolute; top:0em; left:0em"/>
+		</div>
+
+
+		<div class="form-page form-page-current" id="formPageCover">
+
+			<div class="form-row">
+				<h1>
+					<div class="header-larger">
+						Candy?
+					</div>
+					<div class="header-normal">
+						
+					</div>
+				</h1>
+			</div>
+
+			<div class="form-item">
+				<input type="button" class="nextBtn" value="Get Candy">
+			</div>
+		</div>
+
+		<div class="form-page form-page-next" id="intro">
+
+				<div class="form-row">
+					<h1>
+						Before We Start...
+					</h1>
+					<p class="info-paragraph">
+						In order to find the best fit for the Candy, this machine will determine <em>whether you deserve the candy or not</em>, please fill in the following survey.
+					</p>
+				</div>
+	
+				<div class="form-item">
+					<input type="button" class="nextBtn" value="Okay, lets get started!">
+				</div>
+				
+		</div>
+
+
+		<div class="form-page form-page-next" id="pageName">
+
+			<div class="form-item">
+				Your name is?
+			</div>
+		
+			<div class="form-item">
+			<span class="form-label">Name</span>
+				<input type="text" id="fieldName" class="form-input">
+			</div>
+
+			<div class="form-item">
+				<input type="button" class="nextBtn" value="Next">
+			</div>
+
+		</div>
+
+		<div class="form-page form-page-next" id="formNumberSelect">
+
+			<div class="form-item">
+				From 1-10, please select a number <strong>best represent you</strong>.
+			</div>
+
+			<div class="form-item">
+				<div class="number-select-container">
+				</div>
+			</div>
+
+			<div class="form-item">
+				<input type="button" class="nextBtn" value="Next">
+			</div>
+
+		</div>
+
+		<div class="form-page form-page-next" id="faceAnalyzer">
+
+			<div class="form-item">
+				<h1>Visual Analysis</h1>
+			</div>
+
+			<div class="form-item">
+				<input type="button" id="analyzeFaceBtn" value="Analyze">
+			</div>
+
+		</div>
+
+		<div class="form-page form-page-next" id="formPage2">
+			<div class="form-item">
+				<h1>Analyzing...</h1><br/>
+				<div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+			</div>
+		</div>
+
+		<div class="form-page form-page-next" id="formPage1">
+
+			<div class="form-item">
+				<h1>Applicant Info</h1>
+			</div>
+
+			<div class="form-item" >
+				<div class="form-key">
+					Age
+				</div>
+				<div class="form-value" id="age">
+
+				</div>
+			</div>
+
+			<div class="form-item">
+				<div class="form-key">
+					Sex
+				</div>
+				<div class="form-value" id="sex"> 
+
+				</div>
+			</div>
+
+			<div class="form-item">
+				<div class="form-key">
+					Mood
+				</div>
+				<div class="form-value" id="mood">
+
+				</div>
+			</div>
+
+			<div class="form-item">
+				<div class="form-key">
+					Number Selected
+				</div>
+				<div class="form-value" id="number">
+					
+				</div>
+			</div>
+		
+			<div class="form-item">
+				<input type="button" id="submitBtn" value="Submit">
+			</div>
+		</div>
+
+		
+		<div class="form-page form-page-next" id="processing">
+
+			<div class="form-row">
+				<h1>
+					Processing Result<br/><div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+				</h1>
+				<p class="info-paragraph">
+					Determining worthyness result for <span id="name"></span>
+				</p>
+			</div>
+
+		</div>
+
+		<div class="form-page form-page-next" id="formPage2">
+
+			<div class="form-item" id="resultMessage">
+				Sorry 404fdafljkdsjalk;
+			</div>
+
+			<div class="form-item">
+				<input type="button" id="doneBtn" value="Done">
+			</div>
+
+		</div>
+
+
+	</section>
+</div>
+
+</body>
+
+</html>

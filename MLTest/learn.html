@@ -1,0 +1,152 @@
+<html>
+
+<head>
+	<title>Content Generator</title>
+	<link rel="stylesheet" href="../style.css" />
+	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js"></script>
+    <script type ="text/javascript">
+
+        window.onload = function() {
+            let input = document.getElementById('go');
+            input.addEventListener('click', function(e) {
+                csvUrl = document.getElementById("src").value;
+                
+                run().then(() => {
+                    console.log('Model Generated');
+                    model.save('downloads://my-model');
+                });
+            });
+
+            document.getElementById("save").addEventListener("click", function() {
+                model.save('downloads://my-model');
+            });
+        }
+
+        let csvUrl = "https://127.0.0.1:8080/IdealUserModel/data.csv";
+        let model;
+
+        async function run() {
+
+            const csvDataset = tf.data.csv(
+            	csvUrl, {
+            	columnConfigs: {
+            		worthy: {
+            			isLabel: true
+            		}
+            	}
+            });
+
+            // // Number of features is the number of column names minus one for the label
+            // // column.
+            const numOfFeatures = (await csvDataset.columnNames()).length - 1;
+
+            // // Prepare the Dataset for training.
+            const flattenedDataset =
+            	csvDataset
+            	.map(({xs, ys}) => {
+            	// Convert xs(features) and ys(labels) from object form (keyed by column
+                // name) to array form.
+            	return {xs: Object.values(xs), ys: Object.values(ys)};
+            	})
+            	.batch(10);
+
+            
+            //const flattenedDataset = compileProfilesToDataset(profiles);
+
+            // const content = compileProfilesToCsv(profiles);
+            // const uriContent = "data:application/octet-stream," + encodeURIComponent(content);
+            // let newWindow = window.open(uriContent, 'neuesDokument');
+
+            // const numOfFeatures = 4;
+
+
+            // console.log(flattenedDataset)
+
+
+            // Define the model.
+            model = tf.sequential();
+
+            model.add(tf.layers.dense({
+                inputShape: [numOfFeatures],
+                units: 8
+            }));
+
+            model.add(tf.layers.dense({
+                units: 16,
+                activation: 'relu'
+            }));
+
+            model.add(tf.layers.dense({
+                units: 1,
+                activation: "sigmoid"
+            }));
+
+            model.compile({
+                //optimizer: "sdg",
+               // optimizer:"rmsprop",
+                //optimizer: tf.train.adadelta(0.000001),
+                //optimizer: tf.train.adam(0.000001,1,1, 4),
+                //loss: 'meanSquaredError'
+                //loss:'sparseCategoricalCrossentropy'
+                //optimizer: tf.train.adam(0.00001),
+               // loss: tf.losses.softmaxCrossEntropy,
+               // metrics: ['accuracy'],
+                //loss: "meanSquaredError"
+
+                optimizer: 'sgd', loss: 'binaryCrossentropy', lr: 0.000001 
+            });
+
+            // Fit the model using the prepared Dataset
+            return model.fitDataset(flattenedDataset, {
+                epochs: parseInt(document.getElementById("epochs").value),
+                callbacks: {
+                onEpochEnd: async (epoch, logs) => {
+                    console.log(epoch, logs.loss);
+                    document.getElementById("message").innerHTML = `<p>Epoch: ${epoch}, Loss: ${logs.loss}</p>`;
+                }
+                }
+            });
+
+            }
+
+    </script>
+
+    <style>
+        input {
+            font-size: 2rem
+        }
+        input[type="button"] {
+            cursor: pointer;
+        }
+        body {
+            padding: 2em
+        }
+    </style>
+
+</head>
+
+<body>
+
+<section>
+    <h1>upload CSV here</h1>
+    <div class="form-item">
+        Epochs <br/>
+        <input type="text" id="epochs" value="1000" />
+    </div>
+    
+    <div class="form-item">
+        Src <br/>
+        <input type="text" id="src" value="https://127.0.0.1:8080/IdealUserModel/data.csv"/>
+    </div>
+    <div class="form-item">
+        <input type="button" id="go" value="Start Learning" />
+        <input type="button" id="save" value="Save Model" />
+    </div>
+
+    <div id="message"></div>
+    
+</section>
+
+
+</body>
+</html>
